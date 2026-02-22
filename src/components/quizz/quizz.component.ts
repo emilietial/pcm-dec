@@ -77,41 +77,47 @@ export class QuizzComponent implements OnInit {
   }
 
   /**
-   * Action lorsqu'on clique sur la ligne entière (Promotion)
-   */
+     * Action au clic sur la ligne : Ajoute à la fin de la sélection actuelle
+     */
   selectAndPromote(questionIndex: number, answerIndex: number) {
     const question = this.questions[questionIndex];
     const answer = question.answers[answerIndex];
 
-    // Si elle n'est pas sélectionnée, on l'active
-    answer.selected = true;
+    // Si la réponse n'est pas encore sélectionnée
+    if (!answer.selected) {
+      // 1. On compte combien sont déjà sélectionnées
+      const selectedCount = question.answers.filter(a => a.selected).length;
 
-    // On la propulse tout en haut (index 0)
-    if (answerIndex > 0) {
-      moveItemInArray(question.answers, answerIndex, 0);
+      // 2. On l'active
+      answer.selected = true;
+
+      // 3. On la déplace juste après la dernière réponse sélectionnée
+      // Si 2 sont sélectionnées (index 0 et 1), la nouvelle va à l'index 2.
+      moveItemInArray(question.answers, answerIndex, selectedCount);
     }
+    // Optionnel : si elle est déjà sélectionnée, on ne fait rien ou on la remonte ?
+    // Ici, on la laisse à sa place pour ne pas perturber le classement déjà fait.
 
     this.saveToLocalStorage();
   }
 
   /**
-   * Action spécifique sur le bouton Ajouter/Retirer
+   * Action sur le bouton : Gère l'ajout (fin de liste sélectionnée) ou le retrait (fin de liste totale)
    */
   toggleSelection(questionIndex: number, answerIndex: number, event: Event) {
-    event.stopPropagation(); // Empêche de déclencher selectAndPromote en double
+    event.stopPropagation();
 
     const question = this.questions[questionIndex];
     const answer = question.answers[answerIndex];
 
-    // On inverse l'état
-    answer.selected = !answer.selected;
-
-    if (answer.selected) {
-      // AJOUTER : On met tout en haut
-      moveItemInArray(question.answers, answerIndex, 0);
+    if (!answer.selected) {
+      // AJOUTER : rejoint la fin du bloc sélectionné
+      const selectedCount = question.answers.filter(a => a.selected).length;
+      answer.selected = true;
+      moveItemInArray(question.answers, answerIndex, selectedCount);
     } else {
-      // RETIRER : On met tout en bas
-      // (index = longueur du tableau - 1)
+      // RETIRER : part tout en bas de la liste globale
+      answer.selected = false;
       moveItemInArray(question.answers, answerIndex, question.answers.length - 1);
     }
 
