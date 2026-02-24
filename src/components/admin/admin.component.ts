@@ -47,7 +47,7 @@ export class AdminComponent implements OnInit {
             { id: id + '-anal', type: Personality.ANALYSEUR, label: anal.trim(), selected: false },
             { id: id + '-empa', type: Personality.EMPATHIQUE, label: empa.trim(), selected: false },
             { id: id + '-pers', type: Personality.PERSÉVÉRANT, label: pers.trim(), selected: false },
-            { id: id + '-rebe', type: Personality.REBELLE, label: rebe.trim(), selected: false },
+            { id: id + '-rebe', type: Personality.ENERGISEUR, label: rebe.trim(), selected: false },
             { id: id + '-prom', type: Personality.PROMOTEUR, label: prom.trim(), selected: false },
             { id: id + '-imag', type: Personality.IMAGINEUR, label: imag.trim(), selected: false }
           ]
@@ -72,7 +72,7 @@ export class AdminComponent implements OnInit {
   }
 
   downloadTemplate() {
-    const header = "id;question;ANALYSEUR;EMPATHIQUE;PERSÉVÉRANT;REBELLE;PROMOTEUR;IMAGINEUR\n";
+    const header = "id;question;ANALYSEUR;EMPATHIQUE;PERSÉVÉRANT;ENERGISEUR;PROMOTEUR;IMAGINEUR\n";
     const example = "base1;Ma question ?;Réponse Anal;Réponse Empa;Réponse Pers;Réponse Rebe;Réponse Prom;Réponse Imag";
     const blob = new Blob([header + example], { type: 'text/csv' });
     const url = window.URL.createObjectURL(blob);

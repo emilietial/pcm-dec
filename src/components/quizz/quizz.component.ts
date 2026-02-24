@@ -39,7 +39,7 @@ export class QuizzComponent implements OnInit {
 
   ngOnInit(): void {
     const customQuestions = localStorage.getItem('pcm_custom_questions');
-    const savedProgress = localStorage.getItem('pcm_quizz_progress');
+    const savedProgress = localStorage.getItem(this.STORAGE_KEY);
 
     if (savedProgress) {
       this.questions = JSON.parse(savedProgress);
@@ -87,6 +87,10 @@ export class QuizzComponent implements OnInit {
     if (!answer.selected) {
       // 1. On compte combien sont déjà sélectionnées
       const selectedCount = question.answers.filter(a => a.selected).length;
+      if (selectedCount >= 5) {
+        alert("Vous ne pouvez sélectionner que 5 réponses maximum. Retirez-en une pour en ajouter une autre.");
+        return;
+      }
 
       // 2. On l'active
       answer.selected = true;
@@ -110,9 +114,15 @@ export class QuizzComponent implements OnInit {
     const question = this.questions[questionIndex];
     const answer = question.answers[answerIndex];
 
+
     if (!answer.selected) {
       // AJOUTER : rejoint la fin du bloc sélectionné
       const selectedCount = question.answers.filter(a => a.selected).length;
+      console.log('selectedCount', selectedCount);
+      if (selectedCount >= 5) {
+        alert("Vous ne pouvez sélectionner que 5 réponses maximum. Retirez-en une pour en ajouter une autre.");
+        return;
+      }
       answer.selected = true;
       moveItemInArray(question.answers, answerIndex, selectedCount);
     } else {
@@ -128,10 +138,10 @@ export class QuizzComponent implements OnInit {
     const finalAnswers: { [key: string]: number } = {};
     this.questions.forEach(q => {
       q.answers.forEach((ans, index) => {
-        finalAnswers[ans.id] = ans.selected ? (6 - index) : 0;
+        finalAnswers[ans.id] = ans.selected ? (5 - index) : 0;
       });
     });
-    this.results = this.calculator.calculate(finalAnswers);
+    this.results = this.calculator.calculate(finalAnswers, this.questions);
 
     // Une fois terminé, on peut vider le storage ou le garder.
     // Généralement on le vide pour permettre un nouveau test propre.
@@ -154,16 +164,6 @@ export class QuizzComponent implements OnInit {
       localStorage.setItem(this.STORAGE_KEY, data);
     } catch (e) {
       console.error('Erreur lors de la sauvegarde du quizz', e);
-    }
-  }
-
-  private loadFromLocalStorage(): QuizzQuestion[] | null {
-    try {
-      const data = localStorage.getItem(this.STORAGE_KEY);
-      return data ? JSON.parse(data) : null;
-    } catch (e) {
-      console.error('Erreur lors du chargement du quizz', e);
-      return null;
     }
   }
 }

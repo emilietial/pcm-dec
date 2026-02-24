@@ -7,7 +7,7 @@ const outputPath = process.argv[3];
 
 const PERSONALITIES = [
   'ANALYSEUR', 'EMPATHIQUE', 'PERSÉVÉRANT',
-  'REBELLE', 'PROMOTEUR', 'IMAGINEUR'
+  'ENERGISEUR', 'PROMOTEUR', 'IMAGINEUR'
 ];
 
 if (!inputPath || !outputPath) {

@@ -1,9 +1,6 @@
-import { Personality, PcmQuestion } from "../models/pcm.model";
+import { Personality, PcmQuestion } from '../models/pcm.model';
 
-export const PCM_FORM: PcmQuestion[] = [
-  // --- BLOC 1 : BASE (Questions 1 à 10) ---
-  // --- BLOC 2 : ENERGY (Questions 11 à 20) ---
-  // --- BLOC 3 : PHASE (Questions 21 à 30) ---
+export const QUIZZ_OFFICIAL_V2_DATA: PcmQuestion[] = [
   {
     id: 'base1',
     question: "Dans mon quotidien professionnel, ma plus grande force est :",

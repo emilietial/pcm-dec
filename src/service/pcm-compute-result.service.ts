@@ -8,62 +8,65 @@ import { PcmAnswer, PcmQuestion, PcmResult, UserAnswers } from '../models/pcm.mo
 })
 export class PcmComputeResultService {
 
-  public calculate(answers: UserAnswers): PcmResult {
-    const baseScores = this.initScoreMap();
-    const phaseScores = this.initScoreMap();
+  public calculate(answers: Record<string, number>, questions: PcmQuestion[]): PcmResult {
     const globalScores = this.initScoreMap();
+    const phaseScores = this.initScoreMap();
 
-    // 1. Calcul des scores bruts
-    PCM_FORM.forEach((question: PcmQuestion, index: number) => {
-      question.answers.forEach((ans: PcmAnswer) => {
+    // 1. Scores bruts
+    questions.forEach((q) => {
+      q.answers.forEach(ans => {
         const points = answers[ans.id] || 0;
         globalScores[ans.type] += points;
-        if (index < 10) baseScores[ans.type] += points;
-        if (index >= 20) phaseScores[ans.type] += points;
+        if (q.id.startsWith('phase')) {
+          phaseScores[ans.type] += points;
+        }
       });
     });
 
-    // 2. Déterminer l'ordre de l'immeuble (le Condo)
-    // En PCM, l'ordre est défini par les scores globaux décroissants
+
+    console.log('globalScores', globalScores);
+    console.log('phaseScores', phaseScores);
+    // 2. Ordre de l'immeuble (Condo)
     const condoOrder = (Object.keys(globalScores) as Personality[])
       .sort((a, b) => globalScores[b] - globalScores[a]);
 
-    const base = condoOrder[0]; // La Base est toujours le score le plus haut au départ
-    const phase = this.getHighestPersonality(phaseScores);
+    const base = condoOrder[0];
+    const phase = (Object.entries(phaseScores) as [Personality, number][])
+      .reduce((a, b) => (a[1] > b[1] ? a : b))[0];
 
-    // 3. Appliquer la règle des "Étages vécus" à 100%
+    // 3. Pourcentages avec la règle des "Étages Vécus"
     const percentages: Record<Personality, number> = this.initScoreMap();
-    const maxPossibleScore = Math.max(...Object.values(globalScores));
-
-    // Trouver l'index de la phase actuelle dans l'immeuble
+    const maxPossibleScore = 50; // 10 questions * 5 points max
     const phaseIndex = condoOrder.indexOf(phase);
 
+    console.log('condoOrder', condoOrder);
+    console.log('phaseIndex', phaseIndex);
+    console.log('phase', phase);
+    console.log('base', base);
+    console.log('globalScores', globalScores);
+    console.log('phaseScores', phaseScores);
+    console.log('percentages', percentages);
+    console.log('maxPossibleScore', maxPossibleScore);
+
     condoOrder.forEach((type, index) => {
-      if (index <= phaseIndex) {
-        // La Base, la Phase et tout ce qui est entre les deux = 100%
+      if (index < phaseIndex) {
+        // Étages vécus (Base incluse) -> 100%
         percentages[type] = 100;
       } else {
-        // Les étages au-dessus de la phase gardent leur score relatif
-        percentages[type] = Math.round((globalScores[type] / maxPossibleScore) * 100);
+        // Phase actuelle et étages supérieurs -> Score réel relatif
+        // On calcule par rapport au maximum possible (50 points pour 10 questions)
+        const rawScore = globalScores[type];
+        percentages[type] = Math.min(100, Math.round((rawScore / maxPossibleScore) * 100));
       }
     });
 
-    // 4. Identifier les phases vécues pour l'affichage (tout ce qui est sous la phase et n'est pas la base)
-    const livedPhases = condoOrder.slice(1, phaseIndex);
-
-    return {
-      base,
-      phase,
-      livedPhases,
-      scores: globalScores,
-      percentages
-    };
+    return { base, phase, scores: globalScores, percentages, livedPhases: condoOrder.slice(1, phaseIndex) };
   }
 
   private initScoreMap(): Record<Personality, number> {
     return {
       [Personality.ANALYSEUR]: 0, [Personality.EMPATHIQUE]: 0,
-      [Personality.PERSÉVÉRANT]: 0, [Personality.REBELLE]: 0,
+      [Personality.PERSÉVÉRANT]: 0, [Personality.ENERGISEUR]: 0,
       [Personality.PROMOTEUR]: 0, [Personality.IMAGINEUR]: 0
     };
   }

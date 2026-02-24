@@ -18,7 +18,7 @@ export class ResultsDisplayComponent {
       [Personality.ANALYSEUR]: { label: 'Analyseur', color: '#00AEEF', text: 'Logique, organisé, structuré' },
       [Personality.EMPATHIQUE]: { label: 'Empathique', color: '#F7941E', text: 'Chaleureux, sensible, compatissant' },
       [Personality.PERSÉVÉRANT]: { label: 'Persévérant', color: '#92278F', text: 'Observateur, consciencieux, dévoué' },
-      [Personality.REBELLE]: { label: 'Rebelle', color: '#FFF200', text: 'Spontané, créatif, ludique' },
+      [Personality.ENERGISEUR]: { label: 'Énergiseur', color: '#FFF200', text: 'Spontané, créatif, ludique' },
       [Personality.PROMOTEUR]: { label: 'Promoteur', color: '#ED1C24', text: 'Adaptable, charmeur, fonceur' },
       [Personality.IMAGINEUR]: { label: 'Imagineur', color: '#8B5E3C', text: 'Calme, imaginatif, réfléchi' }
     };
