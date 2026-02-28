@@ -7,7 +7,7 @@ import {
   moveItemInArray,
   DragDropModule
 } from '@angular/cdk/drag-drop';
-import { PCM_FORM } from '../../data/pcm.data';
+import { PCM_OFFICIAL_DATA } from '../../data/pcm-official.data.js';
 import { PcmAnswer, PcmResult } from '../../models/pcm.model';
 import { PcmComputeResultService } from '../../service/pcm-compute-result.service';
 import { ResultsDisplayComponent } from '../results-display/results-display.component';
@@ -44,8 +44,8 @@ export class QuizzComponent implements OnInit {
     if (savedProgress) {
       this.questions = JSON.parse(savedProgress);
     } else {
-      // Si des questions custom existent, on les prend, sinon le PCM_FORM
-      const source = customQuestions ? JSON.parse(customQuestions) : PCM_FORM;
+      // Si des questions custom existent, on les prend, sinon le PCM_OFFICIAL_DATA
+      const source = customQuestions ? JSON.parse(customQuestions) : PCM_OFFICIAL_DATA;
 
       this.questions = source.map((q: any) => ({
         ...q,
@@ -57,7 +57,7 @@ export class QuizzComponent implements OnInit {
   }
 
   private initQuizz(): void {
-    this.questions = PCM_FORM.map(q => ({
+    this.questions = PCM_OFFICIAL_DATA.map(q => ({
       ...q,
       answers: [...q.answers]
         .sort(() => Math.random() - 0.5)
@@ -77,8 +77,8 @@ export class QuizzComponent implements OnInit {
   }
 
   /**
-     * Action au clic sur la ligne : Ajoute à la fin de la sélection actuelle
-     */
+   * Action au clic sur la ligne : Ajoute à la fin de la sélection actuelle
+   */
   selectAndPromote(questionIndex: number, answerIndex: number) {
     const question = this.questions[questionIndex];
     const answer = question.answers[answerIndex];

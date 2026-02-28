@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
-import { PCM_FORM } from '../data/pcm.data';
 import { Personality } from '../models/pcm.model';
-import { PcmAnswer, PcmQuestion, PcmResult, UserAnswers } from '../models/pcm.model';
+import { PcmQuestion, PcmResult } from '../models/pcm.model';
 
 @Injectable({
   providedIn: 'root'
@@ -23,9 +22,6 @@ export class PcmComputeResultService {
       });
     });
 
-
-    console.log('globalScores', globalScores);
-    console.log('phaseScores', phaseScores);
     // 2. Ordre de l'immeuble (Condo)
     const condoOrder = (Object.keys(globalScores) as Personality[])
       .sort((a, b) => globalScores[b] - globalScores[a]);
@@ -36,27 +32,25 @@ export class PcmComputeResultService {
 
     // 3. Pourcentages avec la règle des "Étages Vécus"
     const percentages: Record<Personality, number> = this.initScoreMap();
-    const maxPossibleScore = 50; // 10 questions * 5 points max
     const phaseIndex = condoOrder.indexOf(phase);
 
-    console.log('condoOrder', condoOrder);
-    console.log('phaseIndex', phaseIndex);
-    console.log('phase', phase);
     console.log('base', base);
+    console.log('phase', phase);
+    console.log('phaseIndex', phaseIndex);
+    console.log('condoOrder', condoOrder);
     console.log('globalScores', globalScores);
     console.log('phaseScores', phaseScores);
     console.log('percentages', percentages);
-    console.log('maxPossibleScore', maxPossibleScore);
 
     condoOrder.forEach((type, index) => {
-      if (index < phaseIndex) {
+      if (index <= phaseIndex) {
         // Étages vécus (Base incluse) -> 100%
         percentages[type] = 100;
       } else {
-        // Phase actuelle et étages supérieurs -> Score réel relatif
+        // Étages supérieurs -> Score réel relatif
         // On calcule par rapport au maximum possible (50 points pour 10 questions)
         const rawScore = globalScores[type];
-        percentages[type] = Math.min(100, Math.round((rawScore / maxPossibleScore) * 100));
+        percentages[type] = Math.round((rawScore / globalScores[base]) * 100);
       }
     });
 

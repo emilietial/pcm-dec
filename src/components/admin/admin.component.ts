@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import {  PCM_FORM } from '../../data/pcm.data';
+import {  PCM_OFFICIAL_DATA } from '../../data/pcm-official.data.js';
 import { Personality } from '../../models/pcm.model';
 import { RouterLink } from '@angular/router';
 
@@ -21,7 +21,7 @@ export class AdminComponent implements OnInit {
 
   updateCount() {
     const saved = localStorage.getItem(this.STORAGE_KEY);
-    this.currentQuestionsCount = saved ? JSON.parse(saved).length : PCM_FORM.length;
+    this.currentQuestionsCount = saved ? JSON.parse(saved).length : PCM_OFFICIAL_DATA.length;
   }
 
   async onUploadQuestions(event: Event) {
