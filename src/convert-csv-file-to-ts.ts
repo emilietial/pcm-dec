@@ -25,7 +25,7 @@ function convert() {
     const fileName = path.basename(outputPath, '.ts').toUpperCase().replace(/-/g, '_');
 
     let tsOutput = `import { Personality, PcmQuestion } from '../models/pcm.model';\n\n`;
-    tsOutput += `export const ${fileName}: PcmQuestion[] = [\n`;
+    tsOutput += `export const PCM_OFFICIAL_DATA: PcmQuestion[] = [\n`;
 
     for (let i = 1; i < lines.length; i++) {
       const line = lines[i].trim();
